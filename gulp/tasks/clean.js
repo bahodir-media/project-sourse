@@ -1,6 +1,5 @@
-const del = require("del");
+import { deleteAsync } from 'del';
 
-function clean() {
-  return del(["build"]);
+export function clean() {
+  return deleteAsync(['build']);
 }
-exports.clean = clean;

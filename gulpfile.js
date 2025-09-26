@@ -1,8 +1,21 @@
-const { series, parallel } = require("gulp");
-const requireDir = require("require-dir");
+import gulp from 'gulp';
+import { serve } from './gulp/tasks/serve.js';
+import { html } from './gulp/tasks/html.js';
+import { styles } from './gulp/tasks/styles.js';
+import { scripts } from './gulp/tasks/scripts.js';
+import { images } from './gulp/tasks/images.js';
+import { clean } from './gulp/tasks/clean.js';
 
-// load all tasks from gulp/tasks
-requireDir("./gulp/tasks", { recurse: true });
+const { series, parallel } = gulp;
 
-exports.dev = series("clean", parallel("sass", "js", "images", "html"), "serve");
-exports.build = series("clean", parallel("sass", "js", "images", "html"));
+export const build = series(
+  clean,
+  parallel(html, styles, scripts, images)
+);
+
+export const dev = series(
+  build,
+  serve
+);
+
+export default dev;

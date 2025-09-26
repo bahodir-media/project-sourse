@@ -1,16 +1,37 @@
-const { watch, series } = require("gulp");
-const browserSync = require("browser-sync").create();
+import gulp from 'gulp';
+import browserSync from 'browser-sync';
 
-function serve() {
-  browserSync.init({
-    server: { baseDir: "build" },
-    notify: false,
-    open: true,
+import { html } from './html.js';
+import { styles } from './styles.js';
+import { scripts } from './scripts.js';
+import { images } from './images.js';
+
+const { watch, series } = gulp;
+const server = browserSync.create();
+
+function reload(done) {
+  server.reload();
+  done();
+}
+
+export function serve() {
+  server.init({
+    server: {
+      baseDir: 'build'
+    },
+    port: 3000,
+    notify: false
   });
 
-  watch("scss/**/*.scss", series("sass")).on("change", browserSync.reload);
-  watch("js/**/*.js", series("js")).on("change", browserSync.reload);
-  watch("img/**/*", series("images")).on("change", browserSync.reload);
-  watch("*.html", series("html")).on("change", browserSync.reload);
+  // 🔥 Watch HTML
+  watch('*.html', series(html, reload));
+
+  // 🔥 Watch SCSS
+  watch('scss/**/*.scss', series(styles, reload));
+
+  // 🔥 Watch JS
+  watch('js/**/*.js', series(scripts, reload));
+
+  // 🔥 Watch Images
+  watch('img/**/*.{jpg,jpeg,png,svg,gif}', series(images, reload));
 }
-exports.serve = serve;
